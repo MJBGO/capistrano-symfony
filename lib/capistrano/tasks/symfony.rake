@@ -4,6 +4,16 @@ def symfony_console(command, params = '')
   execute :php, fetch(:console_path), command, params, fetch(:symfony_console_flags)
 end
 
+def build_bootstrap_path
+  bootstrap_path = symfony_vendor_path.join("sensio/distribution-bundle")
+
+  if fetch(:sensio_distribution_version).to_i <= 4
+    bootstrap_path = bootstrap_path.join("Sensio/Bundle/DistributionBundle")
+  end
+
+  bootstrap_path.join("Resources/bin/build_bootstrap.php")
+end
+
 namespace :symfony do
   desc "Execute a provided symfony command"
   task :console, :command, :params, :role do |t, args|
@@ -64,7 +74,7 @@ namespace :symfony do
   desc "Set user/group permissions on configured paths"
   task :set_permissions do
     on release_roles :all do
-      if fetch(:permission_method) != false
+      if fetch(:permission_method)
         invoke "deploy:set_permissions:#{fetch(:permission_method).to_s}"
       end
     end
