@@ -1,7 +1,7 @@
 load File.expand_path("../set_symfony_env.rake", __FILE__)
 
 def symfony_console(command, params = '')
-  execute :php, fetch(:console_path), command, params, fetch(:symfony_console_flags)
+  execute :php, fetch(:symfony_console_path), command, params, fetch(:symfony_console_flags)
 end
 
 def build_bootstrap_path
