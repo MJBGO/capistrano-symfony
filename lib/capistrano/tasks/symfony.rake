@@ -1,7 +1,7 @@
 load File.expand_path("../set_symfony_env.rake", __FILE__)
 
-def symfony_console(command, params = '')
-  execute :php, fetch(:symfony_console_path), command, params, fetch(:symfony_console_flags)
+def symfony_console(release_path, command, params = '')
+  execute :php, release_path.join(fetch(:symfony_console_path)), command, params, fetch(:symfony_console_flags)
 end
 
 def build_bootstrap_path
@@ -25,7 +25,7 @@ namespace :symfony do
 
     on release_roles(role) do
       within release_path do
-        symfony_console(command, params)
+        symfony_console(release_path, command, params)
       end
     end
 
@@ -36,14 +36,14 @@ namespace :symfony do
     desc "Run app/console cache:clear for the #{fetch(:symfony_env)} environment"
     task :clear do
       on release_roles(:all) do
-        symfony_console("cache:clear")
+        symfony_console(release_path, "cache:clear")
       end
     end
 
     desc "Run app/console cache:warmup for the #{fetch(:symfony_env)} environment"
     task :warmup do
       on release_roles(:all) do
-        symfony_console("cache:warmup")
+        symfony_console(release_path, "cache:warmup")
       end
     end
   end
@@ -63,8 +63,8 @@ namespace :symfony do
   task :create_cache_dir do
     on release_roles :all do
       within release_path do
-        if test "[ -d #{fetch(:cache_path)} ]"
-          execute :rm, "-rf", fetch(:cache_path)
+        if test "[ -d #{release_path.join(fetch(:cache_path))} ]"
+          execute :rm, "-rf", release_path.join(fetch(:cache_path))
         end
         execute :mkdir, "-pv", fetch(:cache_path)
       end
@@ -84,7 +84,7 @@ namespace :symfony do
   task :clear_controllers do
     next unless any? :controllers_to_clear
     on release_roles :all do
-      within fetch(:web_path) do
+      within release_path.join(fetch(:web_path)) do
         execute :rm, "-f", *fetch(:controllers_to_clear)
       end
     end
