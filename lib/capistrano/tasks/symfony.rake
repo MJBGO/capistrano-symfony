@@ -53,7 +53,7 @@ namespace :symfony do
     task :install do
       on release_roles(:all) do
         within release_path do
-          symfony_console("assets:install", fetch(:assets_install_path) + ' ' + fetch(:assets_install_flags))
+          symfony_console(release_path, "assets:install", fetch(:assets_install_path) + ' ' + fetch(:assets_install_flags))
         end
       end
     end
