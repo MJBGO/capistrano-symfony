@@ -66,7 +66,7 @@ namespace :symfony do
         if test "[ -d #{release_path.join(fetch(:cache_path))} ]"
           execute :rm, "-rf", release_path.join(fetch(:cache_path))
         end
-        execute :mkdir, "-pv", fetch(:cache_path)
+        execute :mkdir, "-pv", release_path.join(fetch(:cache_path))
       end
     end
   end
